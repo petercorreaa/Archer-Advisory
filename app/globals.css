@@ -1,0 +1,159 @@
+@import "tailwindcss";
+@config "../tailwind.config.ts";
+
+/*
+ * Archer Advisory brand foundation.
+ * Clean, corporate. White by default; sand surfaces are opt-in via <Section surface="sand">.
+ */
+
+:root {
+  --background: #ffffff;
+  --foreground: #1a1a1a;
+}
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Global keyboard focus ring — brand orange, overridden per-component where needed. */
+  :focus-visible {
+    outline: 2px solid #CF432B;
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-body), system-ui, sans-serif;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-heading), system-ui, sans-serif;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    color: var(--foreground);
+  }
+
+  h1 {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  h2 {
+    font-size: clamp(2rem, 4vw, 3rem);
+  }
+
+  h3 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 600;
+  }
+}
+
+@layer utilities {
+  /* Deep blue gradient — for use on sand surfaces only, never on orange. */
+  .gradient-blue {
+    background-image: linear-gradient(135deg, #100c9e, #121b4e);
+  }
+}
+
+/* Partner marquee — duplicated list scrolls left to create a seamless loop. */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+.marquee-track {
+  animation: marquee 30s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: auto;
+    gap: 2rem;
+  }
+}
+
+/*
+ * Process section — degrade to linear list on mobile (no pinning).
+ * Pinned scroll-driven sections require a stable viewport; mobile
+ * browsers hide/show the address bar, which makes 100vh unreliable.
+ */
+@media (max-width: 1023px) {
+  [data-process-outer] {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+  [data-process-sticky] {
+    position: relative !important;
+    height: auto !important;
+    overflow: visible !important;
+    padding-bottom: 2rem;
+  }
+  .js-process-step {
+    opacity: 1 !important;
+    transform: none !important;
+    position: relative !important;
+    padding-bottom: 2.5rem;
+  }
+  .js-process-nav {
+    opacity: 1 !important;
+  }
+  .js-process-bar-fill {
+    display: none;
+  }
+}
+
+/*
+ * Services page — process section reduced-motion overrides.
+ * The pinned outer container would otherwise leave 400vh of blank scroll space.
+ * CSS beats GSAP inline styles via !important here intentionally.
+ */
+@media (prefers-reduced-motion: reduce) {
+  [data-process-outer] {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+  [data-process-sticky] {
+    position: relative !important;
+    height: auto !important;
+    overflow: visible !important;
+    padding-bottom: 4rem;
+  }
+  .js-process-step {
+    opacity: 1 !important;
+    transform: none !important;
+    position: relative !important;
+    padding-bottom: 3rem;
+  }
+  .js-process-nav {
+    opacity: 1 !important;
+  }
+  .js-process-bar-fill {
+    transform: scaleX(1) !important;
+  }
+}
+
+/* Disable motion-driven transforms when the user prefers reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
