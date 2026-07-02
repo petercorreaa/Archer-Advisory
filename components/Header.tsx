@@ -7,6 +7,7 @@ import { Button } from "@/components/Button";
 import { Container } from "@/components/Container";
 import { cn } from "@/lib/cn";
 import { gsap, prefersReducedMotion } from "@/lib/gsap";
+import { scrollToTop, stopScroll, startScroll } from "@/lib/scroll";
 
 const NAV = [
   { href: "/", label: "Home" },
@@ -40,10 +41,16 @@ export function Header() {
     );
   }, [menuOpen]);
 
-  // Lock body scroll while overlay is open
+  // Lock scroll while overlay is open. Lenis drives scrolling, so `overflow:
+  // hidden` alone is ignored — we must also stop/start the Lenis instance.
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => void (document.body.style.overflow = "");
+    if (menuOpen) stopScroll();
+    else startScroll();
+    return () => {
+      document.body.style.overflow = "";
+      startScroll();
+    };
   }, [menuOpen]);
 
   const close = () => setMenuOpen(false);
@@ -74,7 +81,13 @@ export function Header() {
           {/* Wordmark */}
           <Link
             href="/"
-            onClick={close}
+            onClick={(e) => {
+              close();
+              if (pathname === "/") {
+                e.preventDefault();
+                scrollToTop();
+              }
+            }}
             className="shrink-0 focus-visible:outline-none focus-visible:ring-2
                        focus-visible:ring-brand-orange/50 focus-visible:ring-offset-2 rounded-sm"
           >
@@ -145,6 +158,25 @@ export function Header() {
           </div>
         </div>
       </header>
+
+      {/* Scroll-to-top FAB */}
+      <button
+        type="button"
+        aria-label="Scroll to top"
+        onClick={scrollToTop}
+        className={cn(
+          "fixed bottom-6 right-6 z-50 w-10 h-10 rounded-full",
+          "bg-white border border-ink/10 shadow-[0_4px_16px_rgba(26,26,26,0.12)]",
+          "flex items-center justify-center text-ink/50 hover:text-brand-orange",
+          "hover:border-brand-orange/30 hover:shadow-[0_4px_20px_rgba(207,67,43,0.15)]",
+          "transition-all duration-300 ease-in-out",
+          scrolled ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-3 pointer-events-none"
+        )}
+      >
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+          <polyline points="2 9 7 4 12 9" />
+        </svg>
+      </button>
 
       {/* Mobile full-screen overlay */}
       <div

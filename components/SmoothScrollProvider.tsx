@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import { gsap, ScrollTrigger, prefersReducedMotion } from "@/lib/gsap";
+import { setLenis, getLenis } from "@/lib/scroll";
 
 /**
  * Drives smooth scrolling with Lenis and keeps GSAP ScrollTrigger in sync with it.
@@ -14,6 +16,8 @@ export function SmoothScrollProvider({
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+
   useEffect(() => {
     if (prefersReducedMotion()) {
       // Native scroll only; still let ScrollTrigger track the default scroller.
@@ -27,6 +31,8 @@ export function SmoothScrollProvider({
       smoothWheel: true,
     });
 
+    setLenis(lenis);
+
     // Sync Lenis position into ScrollTrigger on every scroll event.
     lenis.on("scroll", ScrollTrigger.update);
 
@@ -39,11 +45,37 @@ export function SmoothScrollProvider({
     ScrollTrigger.refresh();
 
     return () => {
+      setLenis(null);
       gsap.ticker.remove(onTick);
       lenis.off("scroll", ScrollTrigger.update);
       lenis.destroy();
     };
   }, []);
+
+  // After a client-side route change the page height changes but Lenis keeps
+  // its old scroll limit, which makes the page "stop scrolling" partway down.
+  // Recalculate the limit and refresh ScrollTrigger once the new page paints.
+  useEffect(() => {
+    const lenis = getLenis();
+    if (!lenis) {
+      // Reduced-motion / native scroll path: still refresh triggers.
+      ScrollTrigger.refresh();
+      return;
+    }
+    lenis.start(); // undo any lingering stop() from a modal on the old route
+
+    let raf2 = 0;
+    const raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => {
+        lenis.resize();
+        ScrollTrigger.refresh();
+      });
+    });
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+    };
+  }, [pathname]);
 
   return <>{children}</>;
 }

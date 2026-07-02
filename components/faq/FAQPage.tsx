@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import { Container } from "@/components/Container";
 import { gsap } from "@/lib/gsap";
+import { resizeScroll } from "@/lib/scroll";
 import { FAQ_CATEGORIES, type FAQItem } from "@/content/faq";
 
 // ── Easing shared with Tailwind brand curve ──────────────────────────────
@@ -35,6 +36,7 @@ function AccordionItem({
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       body.style.height = isOpen ? "auto" : "0px";
       body.style.overflow = isOpen ? "visible" : "hidden";
+      resizeScroll();
       return;
     }
 
@@ -43,10 +45,23 @@ function AccordionItem({
       gsap.fromTo(
         body,
         { height: 0 },
-        { height: h, duration: 0.42, ease: EASE, onComplete: () => { body.style.height = "auto"; } }
+        {
+          height: h,
+          duration: 0.42,
+          ease: EASE,
+          onComplete: () => {
+            body.style.height = "auto";
+            resizeScroll();
+          },
+        }
       );
     } else {
-      gsap.to(body, { height: 0, duration: 0.36, ease: EASE });
+      gsap.to(body, {
+        height: 0,
+        duration: 0.36,
+        ease: EASE,
+        onComplete: resizeScroll,
+      });
     }
   }, [isOpen]);
 
