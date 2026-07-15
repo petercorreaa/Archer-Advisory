@@ -13,13 +13,13 @@ const SERVICES = [
     n: "01",
     title: "Trust Accounting & Reconciliation",
     description:
-      "Comprehensive daily, monthly, and quarterly reconciliation services keeping your IOLTA and client trust accounts perpetually audit-ready. We work within your practice management system to reconcile matter-level balances to the day.",
+      "Comprehensive daily and quarterly reconciliation, keeping your trust and client accounts perpetually audit-ready. We work within your practice management system to reconcile matter-level balances to the day.",
     outcomes: [
-      "Daily three-way reconciliations (bank × ledger × matter balances)",
-      "IOLTA compliance across all trust and escrow accounts",
+      "Daily three-way reconciliation (bank × ledger × matter balances)",
+      "Trust account compliance under your Law Society's recordkeeping rules",
       "Matter-level trust transaction reporting",
       "Audit-ready workpapers prepared quarterly",
-      "Bar association examination support and representation",
+      "Law Society examination support and preparation",
       "Client disbursement tracking and historical reporting",
     ],
     imgUrl: "https://images.unsplash.com/photo-1707157284454-553ef0a4ed0d?auto=format&fit=crop&w=1200&q=80",

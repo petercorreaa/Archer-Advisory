@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Container } from "@/components/Container";
 import { Button } from "@/components/Button";
 import { gsap, ScrollTrigger } from "@/lib/gsap";
-import { STATS } from "@/lib/data";
+import { HOME_STATS } from "@/lib/data";
 
 // ── Static data ────────────────────────────────────────────────────────────
 
@@ -15,7 +15,7 @@ const SERVICES = [
   {
     n: "01",
     title: "Trust Accounting & Reconciliation",
-    body: "Daily three-way reconciliations, IOLTA compliance, matter-level reporting, and audit-ready ledgers — keeping your firm perpetually examination-ready.",
+    body: "Monthly three-way reconciliation, Law Society trust compliance, and audit-ready ledgers — so your firm is never caught off guard by a spot check.",
   },
   {
     n: "02",
@@ -50,20 +50,16 @@ const PARTNERS = [
 
 const DIFF_PILLARS = [
   [
-    "IOLTA & Trust Account Ethics",
-    "Three-way reconciliation, fiduciary rule compliance, and bar association audit preparation.",
-  ],
-  [
-    "AML & Know-Your-Client",
-    "Anti-money laundering program design and client risk classification for matters and retainers.",
-  ],
-  [
     "Conflict Check Frameworks",
-    "Process design and technology integration for comprehensive matter-level conflict identification.",
+    "Process design and system integration for matter-level conflict identification.",
   ],
   [
-    "Financial Regulatory Filings",
-    "State bar financial reporting, FATCA/FBAR obligations, and mandatory disclosure compliance.",
+    "AML & Know-Your-Client Compliance",
+    "Program design and client risk classification for matters and retainers.",
+  ],
+  [
+    "Ethical Decision-Making Advisory",
+    "Guidance on the judgment calls that carry professional and regulatory risk.",
   ],
 ];
 
@@ -184,26 +180,6 @@ export function HomePage() {
           }
         );
 
-        // Stats count-up — each counter fires independently when in view
-        STATS.forEach((stat, i) => {
-          const el = rootRef.current?.querySelectorAll(".js-stat-value")[i] as HTMLElement | null;
-          if (!el) return;
-          const proxy = { val: 0 };
-          gsap.to(proxy, {
-            val: stat.end,
-            duration: 2.2,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: el,
-              start: "top 88%",
-              toggleActions: "play none none none",
-            },
-            onUpdate() {
-              el.textContent = Math.round(proxy.val) + stat.suffix;
-            },
-          });
-        });
-
         // Testimonial cards stagger
         gsap.fromTo(
           ".js-testimonial-card",
@@ -230,10 +206,6 @@ export function HomePage() {
           ".hero-word, .hero-fade, .js-reveal, .js-why-archer, .js-diff-line, .js-service-card, .js-testimonial-card",
           { opacity: 1, y: 0, x: 0, scale: 1 }
         );
-        STATS.forEach((stat, i) => {
-          const el = rootRef.current?.querySelectorAll(".js-stat-value")[i] as HTMLElement | null;
-          if (el) el.textContent = stat.end + stat.suffix;
-        });
       });
 
       // Refresh once after all triggers are registered
@@ -561,26 +533,24 @@ export function HomePage() {
 
       {/* ═══════════════════════════════════════════════════════════════
           5. STATS
-          Dark ink section — count-up animation via GSAP.
+          Dark ink section.
       ══════════════════════════════════════════════════════════════════ */}
       <section className="js-reveal py-28 lg:py-36 bg-ink">
         <Container>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">
-            {STATS.map(({ end, suffix, label }) => (
-              <div key={label} className="text-center lg:text-left">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-12 lg:gap-8">
+            {HOME_STATS.map((stat) => (
+              <div key={stat.label} className="text-center lg:text-left">
                 <p
-                  className="js-stat-value font-heading font-bold text-white"
+                  className="font-heading font-bold text-white"
                   style={{
                     fontSize: "clamp(2.75rem, 5.5vw, 4.25rem)",
                     lineHeight: 1,
                     letterSpacing: "-0.02em",
                   }}
-                  aria-label={`${end}${suffix} ${label}`}
                 >
-                  {/* Initial placeholder shown before GSAP fires */}
-                  0{suffix}
+                  {stat.value}
                 </p>
-                <p className="mt-3 text-sm text-white/45 font-body leading-snug">{label}</p>
+                <p className="mt-3 text-sm text-white/45 font-body leading-snug">{stat.label}</p>
               </div>
             ))}
           </div>
